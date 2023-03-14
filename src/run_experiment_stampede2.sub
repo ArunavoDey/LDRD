@@ -1,0 +1,285 @@
+#!/bin/bash
+##SBATCH -A Scalable-Supercomput
+#SBATCH -J MACHINE           # Job name
+#SBATCH -o MACHINE.o%j       # Name of stdout output file
+#SBATCH -e MACHINE.e%j       # Name of stderr error file
+#SBATCH -p skx-dev          # Queue (partition) name
+#SBATCH -N 3               # Total # of nodes 
+#SBATCH -n 120             # Total # of mpi tasks
+#SBATCH -t 2:00:00        # Run time (hh:mm:ss
+
+
+date
+source ../../../dev/bin/activate
+
+#if [ ! "../../../results" ]; then
+#  mkdir ../../../results
+#fi
+
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "linear_probing" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "linear_probing" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 7
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "linear_probing" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 8
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "fine_tuning" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "stacked_model" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "random_forrest" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
+
+#srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "k_regressor" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
+
+srun -N 1 -n 40 python3 experiment.py 200 10 machine sqlite:///dbs/MACHINE.db 0.1 /results/ "machine" "train" /data/Machine/src/ /data/Machine/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "linear_probing" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 20
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "fine_tuning" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 19
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "linear_probing" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "linear_probing" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 20
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "fine_tuning" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 19
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "stacked_model" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 19
+#srun -N 1 -n 1 python3 experiment.py 200 10 crime sqlite:///dbs/CDB.db 0.1 /results/ "crime" "random_forrest" /data/CRIME/src/ /data/CRIME/tar/ /results/ /models/ /chckpoints/ "ViolentCrimesPerPop" 0.20 0.25 42 84 19
+#srun -N 1 -n 1 python3 experiment.py 200 1 comd sqlite:///dbs/COMD.db 0.1 /results/ "comd" "stacked_model" /data/COMD/src/ /data/COMD/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 comd sqlite:///dbs/COMD.db 0.1 /results/ "comd" "k_regressor" /data/COMD/src/ /data/COMD/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 comd sqlite:///dbs/COMD.db 0.1 /results/ "comd" "random_forrest" /data/COMD/src/ /data/COMD/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 amr sqlite:///dbs/AMR.db 0.1 /results/ "amr" "stacked_model" /data/AMR/src/ /data/AMR/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 amr sqlite:///dbs/AMR.db 0.1 /results/ "amr" "k_regressor" /data/AMR/src/ /data/AMR/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 amr sqlite:///dbs/AMR.db 0.1 /results/ "amr" "random_forrest" /data/AMR/src/ /data/AMR/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "stacked_model" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "k_regressor" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "random_forrest" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "stacked_model" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "k_regressor" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "random_forrest" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 mg sqlite:///dbs/MG.db 0.1 /results/ "mg" "stacked_model" /data/MG/src/ /data/MG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 mg sqlite:///dbs/MG.db 0.1 /results/ "mg" "k_regressor" /data/MG/src/ /data/MG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 mg sqlite:///dbs/MG.db 0.1 /results/ "mg" "random_forrest" /data/MG/src/ /data/MG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "stacked_model" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "k_regressor" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "random_forrest" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 1 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "linear_probing" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 1 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "fine_tuning" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 air sqlite:///dbs/AIR.db 0.1 /results/ "air" "stacked_model" /data/AIR/src/ /data/AIR/tar/ /results/ /models/ /chckpoints/ "PM2.5" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 air sqlite:///dbs/AIR.db 0.1 /results/ "air" "k_regressor" /data/AIR/src/ /data/AIR/tar/ /results/ /models/ /chckpoints/ "PM2.5" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 air sqlite:///dbs/AIR.db 0.1 /results/ "air" "random_forrest" /data/AIR/src/ /data/AIR/tar/ /results/ /models/ /chckpoints/ "PM2.5" 0.20 0.25 42 84 1
+
+
+
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "stacked_model" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "k_regressor" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "random_forrest" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "linear_probing" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "linear_probing" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "linear_probing" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 1 housing sqlite:///dbs/Housing.db 0.1 /results/ "housing" "fine_tuning" /data/Housing/src/ /data/Housing/tar/ /results/ /models/ /chckpoints/ "price" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 5
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 6
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 7
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 8
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "linear_probing" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 9
+#srun -N 1 -n 1 python3 experiment.py 200 10 sssp sqlite:///dbs/SSSP.db 0.1 /results/ "sssp" "fine_tuning" /data/SSSP/src/ /data/SSSP/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 1
+
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 5
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 6
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 7
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 8
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "linear_probing" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 9
+#srun -N 1 -n 1 python3 experiment.py 200 10 bfs sqlite:///dbs/BFS.db 0.1 /results/ "bfs" "fine_tuning" /data/BFS/src/ /data/BFS/tar/ /results/ /models/ /chckpoints/ "teps" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 air sqlite:///dbs/AIR.db 0.1 /results/ "air" "linear_probing" /data/AIR/src/ /data/AIR/tar/ /results/ /models/ /chckpoints/ "PM2.5" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 1 air sqlite:///dbs/AIR.db 0.1 /results/ "air" "fine_tuning" /data/AIR/src/ /data/AIR/tar/ /results/ /models/ /chckpoints/ "PM2.5" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "linear_probing" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "linear_probing" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "linear_probing" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "fine_tuning" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 5
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "linear_probing" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "linear_probing" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "linear_probing" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "linear_probing" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 5
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "linear_probing" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 6
+#srun -N 1 -n 1 python3 experiment.py 200 1 cg sqlite:///dbs/CG.db 0.1 /results/ "cg" "fine_tuning" /data/CG/src/ /data/CG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 1 lu sqlite:///dbs/LU.db 0.1 /results/ "lu" "train-test" /data/LU/src/ /data/LU/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 1 mg sqlite:///dbs/MG.db 0.1 /results/ "mg" "train-test" /data/MG/src/ /data/MG/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 500 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "linear_probing" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 2
+#srun -N 1 -n 1 python3 experiment.py 200 500 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "linear_probing" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 3
+#srun -N 1 -n 1 python3 experiment.py 200 500 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "linear_probing" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 500 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "fine_tuning" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 500 amr sqlite:///dbs/AMR.db 0.1 /results/ "amr" "linear_probing" /data/AMR/src/ /data/AMR/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 4
+#srun -N 1 -n 1 python3 experiment.py 200 500 amr sqlite:///dbs/AMR.db 0.1 /results/ "amr" "fine_tuning" /data/AMR/src/ /data/AMR/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 stacked_model.py 200 300 kripke sqlite:///dbs/KRIPKE.db 0.1 /results/ "kripke" "linear_probing" /data/KRIPKE/src/ /data/KRIPKE/tar/ /results/ /models/ /chckpoints/ "runtime" 0.20 0.25 84 168 2
+
+
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PB sqlite:///TSIPT1.db 0 Pascal-BFS 5 0
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PB sqlite:///TSIPT2.db 0 Pascal-BFS 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PB sqlite:///TSIPT3.db 0 Pascal-BFS 15 6
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Turing-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_TB sqlite:///TSIPT1.db 1 Turing-BFS 5 0
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Turing-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_TB sqlite:///TSIPT2.db 1 Turing-BFS 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Turing-BFS.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_TB sqlite:///TSIPT3.db 1 Turing-BFS 15 6
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PS sqlite:///TSIPT1.db 0 Pascal-SSSP 5 0
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PS sqlite:///TSIPT2.db 0 Pascal-SSSP 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-SSSP.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TS 10 370 4 0.001760026131895 IPTFOR_PS sqlite:///TSIPT3.db 0 Pascal-SSSP 15 6
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_lstm100 sqlite:///lstm50IPT1.db 0 lstm100 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_lstm100 sqlite:///lstm50IPT2.db 0 lstm100 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_lstm100 sqlite:///lstm50IPT3.db 0 lstm100 15 6
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_basic_lstm50 sqlite:///lstm50IPT1.db 0 basic_lstm50 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_basic_lstm50 sqlite:///lstm50IPT2.db 0 basic_lstm50 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_basic_lstm50 sqlite:///lstm50IPT3.db 0 basic_lstm50 15 6
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_basic_lstm_adam.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_basic_lstm100 sqlite:///lstm50IPT1.db 0 basic_lstm100 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_basic_lstm_adam.csv 80 65 lstm50 10 900 5 0.000044463562921665 IPTFOR_basic_lstm100 sqlite:///lstm50IPT2.db 0 basic_lstm100 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_lstm50 sqlite:///lstm100IPT1.db 0 lstm50 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_lstm50 sqlite:///lstm100IPT2.db 0 lstm50 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_lstm50 sqlite:///lstm100IPT3.db 0 lstm50 15 6
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_basic_lstm50 sqlite:///lstm100IPT1.db 0 basic_lstm50 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_basic_lstm50 sqlite:///lstm100IPT2.db 0 basic_lstm50 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 lstm100 10 70 1 0.003566324757 IPTFOR_basic_lstm50 sqlite:///lstm100IPT3.db 0 basic_lstm50 15 6
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm50 sqlite:///basic_lstm50IPT1.db 0 lstm50 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm50 sqlite:///basic_lstm50IPT2.db 0 lstm50 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm50 sqlite:///basic_lstm50IPT3.db 0 lstm50 15 6
+
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm100 sqlite:///basic_lstm50IPT1.db 0 lstm100 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm100 sqlite:///basic_lstm50IPT2.db 0 lstm100 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_lstm100 sqlite:///basic_lstm50IPT3.db 0 lstm100 15 6
+
+
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_basic_lstm_adam.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_basic_lstm100 sqlite:///basic_lstm50IPT1.db 0 basic_lstm100 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_basic_lstm_adam.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_basic_lstm100 sqlite:///basic_lstm50IPT2.db 0 basic_lstm100 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi50_basic_lstm_adam.csv /home1/08389/hcs77/mi100_basic_lstm_adam.csv 80 65 basic_lstm50 10 490 4 0.000157968654149 IPTFOR_basic_lstm100 sqlite:///basic_lstm50IPT3.db 0 basic_lstm100 15 6
+
+
+
+
+
+
+
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm50 sqlite:///basic_lstm100IPT1.db 0 lstm50 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm50 sqlite:///basic_lstm100IPT2.db 0 lstm50 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm50 sqlite:///basic_lstm100IPT3.db 0 lstm50 15 6
+
+
+
+
+
+
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm100 sqlite:///basic_lstm100IPT1.db 0 lstm100 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm100 sqlite:///basic_lstm100IPT2.db 0 lstm100 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi100_lstm.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_lstm100 sqlite:///basic_lstm100IPT3.db 0 lstm100 15 6
+
+
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 1 basic_lstm100 10 210 1 0.00638092289 IPTFOR_basic_lstm50 sqlite:///basic_lstm100IPT1.db 0 basic_lstm50 5 0
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_basic_lstm50 sqlite:///basic_lstm100IPT2.db 0 basic_lstm50 10 3
+
+#srun -N 1 -n 1 python3 IPTTest.py /home1/08389/hcs77/mi100_basic_lstm_adam.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 80 65 basic_lstm100 10 210 1 0.00638092289 IPTFOR_basic_lstm50 sqlite:///basic_lstm100IPT3.db 0 basic_lstm50 15 6
+
+
+
+
+
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm50 10 700 5 0.000882272 IPTFOR_basic_lstm50 sqlite:///lstm50IPT1.db 0 basic_lstm50 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm50 10 700 5 0.000882272 IPTFOR_basic_lstm50 sqlite:///lstm50IPT2.db 0 basic_lstm50 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm50 10 700 5 0.000882272 IPTFOR_basic_lstm50 sqlite:///lstm50IPT3.db 0 basic_lstm50 15 6
+
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm100 10 570 5 0.003514888289693 IPTFOR_basic_lstm50 sqlite:///lstm100IPT1.db 0 basic_lstm50 5 0
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm100 10 570 5 0.003514888289693 IPTFOR_basic_lstm50 sqlite:///lstm100IPT2.db 0 basic_lstm50 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi100_lstm.csv /home1/08389/hcs77/mi50_basic_lstm_adam.csv 20 65 lstm100 10 570 5 0.003514888289693 IPTFOR_basic_lstm50 sqlite:///lstm100IPT3.db 0 basic_lstm50 15 6
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_lstm.csv 20 65 lstm50 10 700 5 0.000882272 IPTFOR_lstm100 sqlite:///lstm50IPT2.db 0 lstm100 10 3
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/mi50_lstm.csv /home1/08389/hcs77/mi100_lstm.csv 20 1 lstm50 10 700 5 0.000882272 IPTFOR_lstm100 sqlite:///lstm50IPT3.db 0 lstm100 15 6
+
+
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_PS sqlite:///TBIPT1.db 2 Pascal-SSSP 5
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_PS sqlite:///TBIPT2.db 2 Pascal-SSSP 10
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Pascal-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_PS sqlite:///TBIPT3.db 2 Pascal-SSSP 15
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Turing-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_TS sqlite:///TBIPT1.db 2 Turing-SSSP 5
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Turing-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_TS sqlite:///TBIPT2.db 2 Turing-SSSP 10
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Turing-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_TS sqlite:///TBIPT3.db 2 Turing-SSSP 15
+
+
+#srun -N 1 -n 16 python3 IPTTest.py /home1/08389/hcs77/Turing-BFS.csv /home1/08389/hcs77/Turing-SSSP.csv 20 65 TB 10 550 5 0.0007389343 IPTFOR_TS sqlite:///TBIPT3.db 2 Turing-SSSP
+date
