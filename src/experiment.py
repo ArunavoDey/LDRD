@@ -106,8 +106,31 @@ def create_model4(
   opt1 = tf.keras.optimizers.Nadam(learning_rate=lr)
   model.compile(loss=lossF, optimizer=opt1, metrics=['mse','mae','mape'])
   return model
+"""
+def create_EXECmodel(
+                 neurons_input = 1, num_of_layers_1=1, neurons_output = 1,
+                  lr=0.01, moment = 0.5, actF="relu", lossF="mean_squared_error", transfer=False, frozen_layers = 0):
 
-
+  model = Sequential()
+  for i in range(num_of_layers_1):
+    layer = Dense(units=neurons_input, activation=actF)
+    layer2 = BatchNormalization(momentum=moment)
+    if transfer == True and i< frozen_layers:
+      #(num_of_layers_1-1):
+      layer.trainable=False
+      layer2.trainable=False
+    model.add(layer)
+    model.add(layer2)
+    #model.add(Dropout(0.4))
+  finalLayer = Dense(units=neurons_output)
+  #finalLayer.trainable=False
+  model.add(finalLayer)
+  #, kernel_regularizer=tf.keras.regularizers.l1(0.01),
+  #                            activity_regularizer=tf.keras.regularizers.l2(0.01)))
+  opt1 = tf.keras.optimizers.Nadam(learning_rate=lr)
+  model.compile(loss=lossF, optimizer=opt1, metrics=['mse','mae','mape'])
+  return model
+"""
 
 
 
