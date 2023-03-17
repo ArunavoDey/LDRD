@@ -74,12 +74,30 @@ class dataLoader():
         self.src_data = self.src_data.drop([len(self.src_data.index)-1])
     for name in s_arr:
         self.tar_data = self.tar_data.drop([len(self.tar_data.index)-1])
-    ##listing other string valued columns in source
-    stringColumns = []
+    ##listing rest string valued columns in source
+    strColumnsValues = {}
+    srcStringColumns = []
     for i in range(len(self.src_data.columns)):
       if self.src_data.columns[i] not in specialColumns:
         if self.src_data[self.src_data.columns[i]].dtypes == "object":
-          stringColumns.append(self.src_data.columns[i])
+          srcStringColumns.append(self.src_data.columns[i])
+          strColumnsValues[self.src_data.columns[i]] = []
+          for value in self.src_data[self.src_data.columns[i]].unique():
+            strColumnsValues[self.src_data.columns[i]].append(value)
+    
+    ##listing similar or unique string valued columns in target
+    tarStringColumns = []
+    for i in range(len(self.tar_data.columns)):
+      if self.tar_data.columns[i] not in specialColumns:
+        if self.tar_data[self.tar_data.columns[i]].dtypes == "object":
+          tarStringColumns.append(self.tar_data.columns[i])
+          if self.tar_data.columns[i] not in strColumnsValues:
+            strColumnsValues[self.tar_data.columns[i]] = []
+            for value in self.tar_data[self.tar_data.columns[i]].unique():
+              if value not in strColumnsValues[self.tar_data.columns[i]]:
+                strColumnsValues[self.src_data.columns[i]].append(value)
+
+
     ##apply one hot encoding to other string columns on source
     print(f"src string columns {stringColumns}")
     print(self.src_data)
