@@ -46,7 +46,7 @@ class dataLoader():
   def getData(self):
     return self.src_data, self.tar_data
 
-  def getXY(self, colName, rowName, targetColumn):
+  def getXY(self, colName, rowName, targetColumn, specialColumns):
     #if datasetName == "perfvar":
     #  application = rowName
     #  self.src_data = self.src_data.loc[self.src_data['application']!= application]
@@ -77,8 +77,9 @@ class dataLoader():
     ##listing other string valued columns in source
     stringColumns = []
     for i in range(len(self.src_data.columns)):
-      if self.src_data[self.src_data.columns[i]].dtypes == "object":
-        stringColumns.append(self.src_data.columns[i])
+      if self.src_data.columns[i] not in specialColumns:
+        if self.src_data[self.src_data.columns[i]].dtypes == "object":
+          stringColumns.append(self.src_data.columns[i])
     ##apply one hot encoding to other string columns on source
     print(f"src string columns {stringColumns}")
     print(self.src_data)
@@ -95,8 +96,9 @@ class dataLoader():
     ##listing other string valued columns in target
     stringColumns = []
     for i in range(len(self.tar_data.columns)):
-      if self.tar_data[self.tar_data.columns[i]].dtypes == "object":
-        stringColumns.append(self.tar_data.columns[i])
+      if self.tar_data.columns[i] not in specialColumns:
+        if self.tar_data[self.tar_data.columns[i]].dtypes == "object":
+          stringColumns.append(self.tar_data.columns[i])
     ##apply one hot encoding to other string columns on source
     self.tar_data = pd.get_dummies(self.tar_data, columns = stringColumns, drop_first=False)
     #Columns to be omitted

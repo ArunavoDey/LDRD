@@ -166,6 +166,7 @@ if __name__ == "__main__":
   rand_state = int(sys.argv[17])
   rand_state2 = int(sys.argv[18])
   num_of_frozen_layers = int(sys.argv[19])
+  forCounters = int(sys.argv[20])
   idx = int(n*100)
   #fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-results.csv", "w")
   #writer = csv.writer(fileI)
@@ -174,7 +175,8 @@ if __name__ == "__main__":
   loader = dataLoader(src_path, tar_path)
   loader.loadData()
   #src_x, src_y, tar_x, tar_y = loader.getXY("ccgrid", None, "","teps",['graph_name','kernel_time','d2h_time','h2d_time','device','teps'])
-  src_x, src_y, tar_x, tar_y = loader.getXY("", "",target_label)
+  specialColumns = ["args"]
+  src_x, src_y, tar_x, tar_y = loader.getXY("", "",target_label, specialColumns)
   print("Src x shape before preprocessing")
   print(src_x.shape)
   print("Tar_x shape before preprocessing")
@@ -185,6 +187,10 @@ if __name__ == "__main__":
   tar_x_scaled, tar_y_scaled = p.getTargetScaled()
   """# **Train Test validation**"""
   X_train, y_train, src_train, src_y_train, src_val, src_y_val, X_test, y_test = p.train_test_val( test_split, val_split, rand_state, rand_state2)
+  if forCounters == 0:
+    runFor = "Exec"
+  else:
+    runFor = "PC"
   try:
     with tf.device('/gpu:0'):
       n = len(tar_x_scaled)/10
@@ -195,7 +201,7 @@ if __name__ == "__main__":
       if use_case == "train":
         nnparameters = optunannPOD.finder(X_train, y_train, epochs= ep1, checkpoint_path=f"{chck_path}{target_app}/", num_of_trials=trials, fold=10, stname=stdy, storageName =storageN )  #/content/MyDrive/SimpleNN/
         #predictorModel = optunannPOD.create_model(neurons_input= int(nnparameters.params['neuron']), num_of_layers_1=int(nnparameters.params['num_layers']), lr= float(nnparameters.params['lr2']), moment = float(nnparameters.params['Momentum']), actF="relu", lossF="mean_squared_error")
-        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-parameters.txt", "w")
+        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-{runFor}-parameters.txt", "w")
         print("Neurons ")
         print(nnparameters.params['neuron'])
         f.write(f"{nnparameters.params['neuron']}")
@@ -245,7 +251,56 @@ if __name__ == "__main__":
         #plt.title(f'MSE: {mse}, R2: {r2}-Source for x-{target_app}')
         plt.savefig(f"{result_path}figs/Source-model-on-x-{target_app}.pdf")
         """# **Model Saving and Loading**"""
-        model.save_weights(f"{model_path}x-{target_app}-SourceModel")
+        model.save_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
+      elif use_case =="train_on_test":
+        for i in range(5):
+          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-LP{num_of_frozen_layers}-results-{i}.csv", "w")
+          writer = csv.writer(fileI)
+          for j in range(1,10):
+            n = j/10
+            tar_x_scaled, tar_y_scaled = p.getTargetScaled()
+            num_of_samples = int(n*len(tar_x_scaled))
+            if num_of_frozen_layers == 1:
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "w" )
+              readModeOn = False
+            elif num_of_frozen_layers >1:
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "r" )
+              readModeOn = True
+            dropIndices = []
+            rowArr = []
+            x2 =[]
+            lb2 = []
+            totallen = len(tar_x_scaled)
+            if readModeOn == True:
+              loaded_indices = indices.readlines()
+            z = 0
+            for k in range(num_of_samples):
+              #print(f"len of tar_x_scaled is now {len(tar_x_scaled)}")
+              if readModeOn ==True:
+                index =  int(loaded_indices[z]) #
+              else:
+                index = random.randint(0, totallen-1 ) #int(nums[i])
+                indices.write(str(index))
+                indices.write(" ")
+                indices.write("\n")
+              #print(index)
+              dropIndices.append(index)
+              z = z + 1
+            x2.append(tar_x_scaled[index:index+1])
+            lb2.append(tar_y_scaled[index:index+1])
+            tar_x_scaled = np.delete(tar_x_scaled, index, 0)
+            tar_y_scaled = np.delete(tar_y_scaled, index, 0)
+            totallen -= 1
+            indices.close()
+
+            x2 = tf.convert_to_tensor( x2, dtype=tf.float64)
+            lb2 = tf.convert_to_tensor( lb2, dtype=tf.float64)
+            x2 = tf.reshape(x2, (x2.shape[0], x2.shape[2]))
+            lb2 = tf.reshape(lb2, (lb2.shape[0], lb2.shape[2]))
+            
+            X_n = tf.concat([X_train, x2], 0)
+            y_n = tf.concat([y_train, lb2], 0)
+            
       elif use_case == "train-test":
         nnparameters = optunannPOD.finder(X_train, y_train, epochs= ep1, checkpoint_path=f"chck_path{target_app}/", num_of_trials=trials, fold=10, stname=stdy, storageName =storageN )  #/content/MyDrive/SimpleNN/
         #predictorModel = optunannPOD.create_model(neurons_input= int(nnparameters.params['neuron']), num_of_layers_1=int(nnparameters.params['num_layers']), lr= float(nnparameters.params['lr2']), moment = float(nnparameters.params['Momentum']), actF="relu", lossF="mean_squared_error")
