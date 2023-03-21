@@ -72,7 +72,7 @@ import json
 ##################### Model Creation
 
 def create_model(
-                 neurons_input = 1, num_of_layers_1=1,
+                 neurons_input = 1, num_of_layers_1=1, output_neurons=1,
                   lr=0.01, moment = 0.5, actF="relu", lossF="mean_squared_error"):
 
   model = Sequential()
@@ -80,7 +80,7 @@ def create_model(
     model.add(Dense(units=neurons_input, activation=actF))
     model.add(BatchNormalization(momentum=moment))
   ##final layer
-  model.add(Dense(units=1))#, kernel_regularizer=tf.keras.regularizers.l1(0.01), activity_regularizer=tf.keras.regularizers.l2(0.01)))
+  model.add(Dense(units=output_neurons))#, kernel_regularizer=tf.keras.regularizers.l1(0.01), activity_regularizer=tf.keras.regularizers.l2(0.01)))
   opt1 = tf.keras.optimizers.Nadam(learning_rate=lr)
   model.compile(loss=lossF, optimizer=opt1, metrics=['mse','mae','mape'])
   return model
@@ -132,7 +132,7 @@ class Objective(object):
     momentum = trial.suggest_float('Momentum', low=0.4, high=1.0, step=0.1)
     #lr2 = trial.suggest_loguniform('lr2', 1e-7, 1e-1)
     lr2 = trial.suggest_categorical("lr2", [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0])
-    self.model  = create_model(neurons_input = neuron, num_of_layers_1=num_layers, lr = lr2, moment=momentum, actF="relu", lossF="mean_squared_error")
+    self.model  = create_model(neurons_input = neuron, num_of_layers_1=num_layers, output_neurons=self.labels.shape[1], lr = lr2, moment=momentum, actF="relu", lossF="mean_squared_error")
     losses = []
     total_loss = 0
     ls = 0

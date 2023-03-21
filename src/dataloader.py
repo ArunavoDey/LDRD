@@ -93,15 +93,39 @@ class dataLoader():
           tarStringColumns.append(self.tar_data.columns[i])
           if self.tar_data.columns[i] not in strColumnsValues:
             strColumnsValues[self.tar_data.columns[i]] = []
-            for value in self.tar_data[self.tar_data.columns[i]].unique():
-              if value not in strColumnsValues[self.tar_data.columns[i]]:
-                strColumnsValues[self.src_data.columns[i]].append(value)
+          for value in self.tar_data[self.tar_data.columns[i]].unique():
+            if value not in strColumnsValues[self.tar_data.columns[i]]:
+              strColumnsValues[self.src_data.columns[i]].append(value)
+   
+    for columnName in list(strColumnsValues.keys()):
+      new_src_d = pd.DataFrame()
+      new_tar_d = pd.DataFrame()
+      for pos in range(len(self.src_data)):
+        src_row = self.src_data[pos:pos+1]
+        for columnValue in strColumnsValues[columnName]:
+          if str(src_row[columnName]) == str(columnValue):
+            new_src_d.at[pos,columnValue] = 1
+          else:
+            new_src_d.at[pos,columnValue] = 0
+      for pos in range(len(self.tar_data)):
+        tar_row = self.tar_data[pos:pos+1]
+        for columnValue in strColumnsValues[columnName]:
+          if str(tar_row[columnName]) == str(columnValue):
+            new_tar_d.at[pos,columnValue] = 1
+          else:
+            new_tar_d.at[pos,columnValue] = 0
+      self.src_data = self.src_data.drop([columnName], axis=1)
+      self.tar_data = self.tar_data.drop([columnName], axis=1)
+      self.src_data = pd.concat([self.src_data, new_src_d], axis=1)
+      self.tar_data = pd.concat([self.tar_data, new_tar_d], axis=1)
 
 
     ##apply one hot encoding to other string columns on source
+    """
     print(f"src string columns {stringColumns}")
     print(self.src_data)
     self.src_data = pd.get_dummies(self.src_data, columns = stringColumns, drop_first=False)
+    """
     #Columns to be omitted
     omitColumns = []
     omitColumns.append(targetColumn)
@@ -112,13 +136,15 @@ class dataLoader():
     self.src_x = self.src_data.values
 
     ##listing other string valued columns in target
+    """
     stringColumns = []
     for i in range(len(self.tar_data.columns)):
       if self.tar_data.columns[i] not in specialColumns:
         if self.tar_data[self.tar_data.columns[i]].dtypes == "object":
           stringColumns.append(self.tar_data.columns[i])
+    """
     ##apply one hot encoding to other string columns on source
-    self.tar_data = pd.get_dummies(self.tar_data, columns = stringColumns, drop_first=False)
+    #self.tar_data = pd.get_dummies(self.tar_data, columns = stringColumns, drop_first=False)
     #Columns to be omitted
     omitColumns = []
     omitColumns.append(targetColumn)

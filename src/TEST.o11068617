@@ -1,0 +1,63 @@
+Mon Mar 20 01:32:09 CDT 2023
+Index(['-p', '-dim', '-rs', '-tf', '-pa', '-i', '-s', '--niter', '--groups',
+       'Domain_quartz_kripke', 'Domain_quartz_laghos', 'Domain_quartz_lulesh',
+       'bj', 'sweep', 'seq...', 'sequ...', '...', 's...', 'seque...', 'se...'],
+      dtype='object')
+Index(['-p', '-dim', '-rs', '-tf', '-pa', '-i', '-s', '--niter', '--groups',
+       'Domain_quartz_kripke', 'Domain_quartz_laghos', 'Domain_quartz_lulesh',
+       'bj', 'sweep', 'seq...', 'sequ...', '...', 's...', 'seque...', 'se...'],
+      dtype='object')
+(386, 20)
+(210, 20)
+Src x shape before preprocessing
+(386, 20)
+Tar_x shape before preprocessing
+(210, 20)
+Src y shape before preprocessing
+(386,)
+Tar_y shape before preprocessing
+(210,)
+src_x shape (386, 20)
+tar_x shape (210, 20)
+X train shape
+(308, 20)
+X_test shape
+(78, 20)
+Index(['ranks', 'duration', 'PAPI_BR_INS', 'PAPI_LD_INS', 'PAPI_SR_INS',
+       'PAPI_TOT_INS', 'PAPI_L1_LDM', 'PAPI_L1_STM', 'PAPI_L2_LDM',
+       'PAPI_L2_STM', 'EPT', 'FP_ARITH:SCALAR_SINGLE',
+       'FP_ARITH:SCALAR_DOUBLE', 'ARITH', 'IO Bytes Read', 'IO Bytes Written',
+       'PAPI_MEM_WCY', 'Domain_quartz_kripke', 'Domain_quartz_laghos',
+       'Domain_quartz_lulesh'],
+      dtype='object')
+Index(['ranks', 'duration', 'PAPI_BR_INS', 'PAPI_LD_INS', 'PAPI_SR_INS',
+       'PAPI_TOT_INS', 'PAPI_L1_LDM', 'PAPI_L1_STM', 'PAPI_L2_LDM',
+       'PAPI_L2_STM', 'EPT', 'FP_ARITH:SCALAR_SINGLE',
+       'FP_ARITH:SCALAR_DOUBLE', 'ARITH', 'IO Bytes Read', 'IO Bytes Written',
+       'PAPI_MEM_WCY', 'Domain_quartz_kripke', 'Domain_quartz_laghos',
+       'Domain_quartz_lulesh'],
+      dtype='object')
+(386, 20)
+(210, 20)
+src_x shape (386, 20)
+tar_x shape (210, 20)
+Counter x shape preprocessing 1
+(386, 20)
+Counter tar_x shape preprocessing 1
+(210, 20)
+Counter x shape preprocessing 2
+(308, 20)
+Counter src train shape preprocessing 2
+(231, 20)
+Counter src val shape preprocessing 2
+(77, 20)
+Counter X_test shape preprocessing 2
+(78, 20)
+Counter y shape preprocessing 2
+(308, 1)
+Counter tar_x shape preprocessing 2
+(210, 20)
+Counter tar_y shape preprocessing 2
+(210, 1)
+sorry no match
+Mon Mar 20 01:32:58 CDT 2023

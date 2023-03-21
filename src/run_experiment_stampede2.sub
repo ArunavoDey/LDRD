@@ -1,16 +1,16 @@
 #!/bin/bash
 ##SBATCH -A Scalable-Supercomput
-#SBATCH -J MACHINE           # Job name
-#SBATCH -o MACHINE.o%j       # Name of stdout output file
-#SBATCH -e MACHINE.e%j       # Name of stderr error file
+#SBATCH -J RELAYONLY           # Job name
+#SBATCH -o RELAYONLY.o%j       # Name of stdout output file
+#SBATCH -e RELAYONLY.e%j       # Name of stderr error file
 #SBATCH -p skx-dev          # Queue (partition) name
-#SBATCH -N 3               # Total # of nodes 
-#SBATCH -n 120             # Total # of mpi tasks
+#SBATCH -N 1               # Total # of nodes 
+#SBATCH -n 1             # Total # of mpi tasks
 #SBATCH -t 2:00:00        # Run time (hh:mm:ss
 
 
 date
-source ../../../dev/bin/activate
+source ../../dev/bin/activate
 
 #if [ ! "../../../results" ]; then
 #  mkdir ../../../results
@@ -25,7 +25,19 @@ source ../../../dev/bin/activate
 
 #srun -N 1 -n 1 python3 experiment.py 200 10 skillcraft sqlite:///dbs/SKILLCRAFT.db 0.1 /results/ "skillcraft" "k_regressor" /data/SKILLCRAFT/src/ /data/SKILLCRAFT/tar/ /results/ /models/ /chckpoints/ "ActionLatency" 0.20 0.25 42 84 1
 
-srun -N 1 -n 40 python3 experiment.py 200 10 machine sqlite:///dbs/MACHINE.db 0.1 /results/ "machine" "train" /data/Machine/src/ /data/Machine/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1
+#srun -N 1 -n 1 python3 experiment.py 200 20 counters sqlite:///dbs/COUNTERS.db 0.1 /results/ "counters" "linear_probing" /data/MACHINE/COUNTERS/src/ /data/MACHINE/COUNTERS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1 0
+#srun -N 1 -n 1 python3 experiment.py 200 20 counters sqlite:///dbs/COUNTERS.db 0.1 /results/ "counters" "linear_probing" /data/MACHINE/COUNTERS/src/ /data/MACHINE/COUNTERS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 2 0
+srun -N 1 -n 1 python3 experiment.py 200 20 arg sqlite:///dbs/ARG.db 0.1 /results/ "args" "relay_only" /data/MACHINE/ARGS/src/ /data/MACHINE/ARGS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 9 1 /data/MACHINE/COUNTERS/src/ /data/MACHINE/COUNTERS/tar/ counter sqlite:///dbs/COUNTER.db
+
+#srun -N 1 -n 1 python3 experiment.py 200 20 counters sqlite:///dbs/COUNTERS.db 0.1 /results/ "counters" "fine_tuning" /data/MACHINE/COUNTERS/src/ /data/MACHINE/COUNTERS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1 0
+
+#srun -N 1 -n 1 python3 experiment.py 200 20 args sqlite:///dbs/ARGS.db 0.1 /results/ "args" "linear_probing" /data/MACHINE/ARGS/src/ /data/MACHINE/ARGS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1 0
+#srun -N 1 -n 1 python3 experiment.py 200 20 args sqlite:///dbs/ARGS.db 0.1 /results/ "args" "linear_probing" /data/MACHINE/ARGS/src/ /data/MACHINE/ARGS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 2 0
+#srun -N 1 -n 1 python3 experiment.py 200 20 args sqlite:///dbs/ARGS.db 0.1 /results/ "args" "linear_probing" /data/MACHINE/ARGS/src/ /data/MACHINE/ARGS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 3 0
+
+#srun -N 1 -n 1 python3 experiment.py 200 20 args sqlite:///dbs/ARGS.db 0.1 /results/ "args" "fine_tuning" /data/MACHINE/ARGS/src/ /data/MACHINE/ARGS/tar/ /results/ /models/ /chckpoints/ "REALTIME (sec)" 0.20 0.25 42 84 1 0
+
+
 
 
 

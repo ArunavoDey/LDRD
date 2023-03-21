@@ -144,7 +144,7 @@ if __name__ == "__main__":
   #path_to_module = '/content/drive/MyDrive/'
   #np.random.seed(1)  
   #tf.random.set_seed(2)
-  os.chdir("../../../")
+  os.chdir("../../")
   ep1 = int(sys.argv[1])
   trials = int(sys.argv[2])
   #shot = sys.argv[5]
@@ -181,6 +181,10 @@ if __name__ == "__main__":
   print(src_x.shape)
   print("Tar_x shape before preprocessing")
   print(tar_x.shape)
+  print("Src y shape before preprocessing")
+  print(src_y.shape)
+  print("Tar_y shape before preprocessing")
+  print(tar_y.shape)
   #print(f"{tar_x.shape}, {tar_y.shape}")
   p = preprocessor(src_x, src_y, tar_x, tar_y, 0)
   p.preprocess()
@@ -191,6 +195,19 @@ if __name__ == "__main__":
     runFor = "Exec"
   else:
     runFor = "PC"
+    src_path2 = os.getcwd()+sys.argv[21]
+    tar_path2 = os.getcwd()+sys.argv[22]
+    stdy2 = sys.argv[23]
+    storageN2 = sys.argv[24]
+    counterLoader = dataLoader(src_path2, tar_path2)
+    counterLoader.loadData()
+    counter_src_x, counter_src_y, counter_tar_x, counter_tar_y = counterLoader.getXY("", "",target_label, specialColumns)
+    counterProcessor = preprocessor(counter_src_x, counter_src_y, counter_tar_x, counter_tar_y, 0)
+    counterProcessor.preprocess()
+    counter_tar_x_scaled, counter_tar_y_scaled = counterProcessor.getTargetScaled()
+    counter_X_train, counter_y_train, counter_src_train, counter_src_y_train, counter_src_val, counter_src_y_val, counter_X_test, counter_y_test = counterProcessor.train_test_val( test_split, val_split, rand_state, rand_state2)
+
+
   try:
     with tf.device('/gpu:0'):
       n = len(tar_x_scaled)/10
@@ -234,7 +251,7 @@ if __name__ == "__main__":
         callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=20)
     
         """# **Num of samples splitting and model fitting**"""
-        history = model.fit(X_train, y_train, batch_size = nnparameters.params['batch_size'] , epochs=1000, callbacks=[ callback2])
+        history = model.fit(X_train, y_train, batch_size = nnparameters.params['batch_size'] , epochs=1000, callbacks=[ callback2],validation_split=0.2, shuffle= True)
         """# **Model Performance on Source**""" 
         predictions = model.predict(X_test)
         matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -244,33 +261,180 @@ if __name__ == "__main__":
         mse,r2 = mean_squared_error(y_test#.reshape(-1,1)
 		, predictions), r2_score(y_test#.reshape(-1,1)
 				, predictions)
+        print(f"source on source mse is {mse}")
+        print(f"source on source r2 is {r2}")
         plt.xlabel('Actual Labels', fontsize=32)
         plt.ylabel('Predicted Labels', fontsize=32)
         plt.xticks(fontsize=32)
         plt.yticks(fontsize=32)
         #plt.title(f'MSE: {mse}, R2: {r2}-Source for x-{target_app}')
-        plt.savefig(f"{result_path}figs/Source-model-on-x-{target_app}.pdf")
+        plt.savefig(f"{result_path}figs/Source-model-on-source-{target_app}-{runFor}.pdf")
         """# **Model Saving and Loading**"""
         model.save_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
-      elif use_case =="train_on_test":
+        plot_graphs(history, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-{runFor}-train-val-loss.pdf")
+      elif use_case =="relay_train":
+        counter_nnparameters = optunannPOD.finder(X_train, counter_X_train, epochs= ep1, checkpoint_path=f"{chck_path}{target_app}-COUNTERS/", num_of_trials=trials, fold=10, stname=stdy, storageName =storageN )  #/content/MyDrive/SimpleNN/
+        #predictorModel = optunannPOD.create_model(neurons_input= int(nnparameters.params['neuron']), num_of_layers_1=int(nnparameters.params['num_layers']), lr= float(nnparameters.params['lr2']), moment = float(nnparameters.params['Momentum']), actF="relu", lossF="mean_squared_error")
+        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-COUNTERS-parameters.txt", "w")
+        print("Neurons ")
+        print(counter_nnparameters.params['neuron'])
+        f.write(f"{counter_nnparameters.params['neuron']}")
+        f.write(" ")
+        print("Number of layers")
+        print(counter_nnparameters.params['num_layers'])
+        f.write(f"{counter_nnparameters.params['num_layers']}")
+        f.write(" ")
+        print("Learning rate")
+        print(counter_nnparameters.params['lr2'])
+        f.write(f"{counter_nnparameters.params['lr2']}")
+        f.write(" ")
+        print("Best Trial Number")
+        print(counter_nnparameters.number)
+        print("batch_size")
+        print(counter_nnparameters.params['batch_size'])
+        f.write(f"{counter_nnparameters.params['batch_size']}")
+        f.write(" ")
+        print("Momentum")
+        print(counter_nnparameters.params['Momentum'])
+        f.write(f"{counter_nnparameters.params['Momentum']}")
+        f.write(" ")
+        f.close()
+        nnparameters = optunannPOD.finder(counter_X_train, counter_y_train, epochs= ep1, checkpoint_path=f"{chck_path}COUNTERS-{runFor}/", num_of_trials=trials, fold=10, stname=stdy2, storageName =storageN2 )  #/content/MyDrive/SimpleNN/
+        #predictorModel = optunannPOD.create_model(neurons_input= int(nnparameters.params['neuron']), num_of_layers_1=int(nnparameters.params['num_layers']), lr= float(nnparameters.params['lr2']), moment = float(nnparameters.params['Momentum']), actF="relu", lossF="mean_squared_error")
+        f = open(f"{result_path}txt/Source-model-on-target-COUNTERS-{runFor}-parameters.txt", "w")
+        print("Neurons ")
+        print(nnparameters.params['neuron'])
+        f.write(f"{nnparameters.params['neuron']}")
+        f.write(" ")
+        print("Number of layers")
+        print(nnparameters.params['num_layers'])
+        f.write(f"{nnparameters.params['num_layers']}")
+        f.write(" ")
+        print("Learning rate")
+        print(nnparameters.params['lr2'])
+        f.write(f"{nnparameters.params['lr2']}")
+        f.write(" ")
+        print("Best Trial Number")
+        print(nnparameters.number)
+        print("batch_size")
+        print(nnparameters.params['batch_size'])
+        f.write(f"{nnparameters.params['batch_size']}")
+        f.write(" ")
+        print("Momentum")
+        print(nnparameters.params['Momentum'])
+        f.write(f"{nnparameters.params['Momentum']}")
+        f.write(" ")
+        f.close()
+
+        #for i in range(5):
+        #X_train, y_train, src_train, src_y_train, src_val, src_y_val, X_test, y_test = p.train_test_val( 0.20, 0.25, (i*35), (i*71))
+        #model = create_model3(neurons_input= 600, num_of_layers_1= 9, lr=0.06, moment = 0.5000000000000001, actF="relu", lossF="mean_squared_error")
+        counter_model = create_model4(neurons_input = counter_nnparameters.params['neuron'] , num_of_layers_1= counter_nnparameters.params['num_layers'] , neurons_output = counter_X_train.shape[1], lr= counter_nnparameters.params['lr2'] , moment = counter_nnparameters.params['Momentum'] , actF="relu", lossF="mean_squared_error")
+        realtime_model = create_model4(neurons_input = nnparameters.params['neuron'] , num_of_layers_1= nnparameters.params['num_layers'] , lr= nnparameters.params['lr2'] , moment = nnparameters.params['Momentum'] , actF="relu", lossF="mean_squared_error")
+        #model = create_model3(neurons_input = 740, num_of_layers_1= 1 , lr=0.0013461782513436136 , moment = 0.076 , actF="relu", lossF="mean_squared_error")
+        callback = tf.keras.callbacks.LearningRateScheduler(scheduler)
+        callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=20)
+
+        """# **Num of samples splitting and model fitting**"""
+        history1 = counter_model.fit(X_train, counter_X_train, batch_size = counter_nnparameters.params['batch_size'] , epochs=1000, callbacks=[ callback2],validation_split=0.2, shuffle= True)
+        history2 = realtime_model.fit(counter_X_train, counter_y_train, batch_size = nnparameters.params['batch_size'] , epochs=1000, callbacks=[ callback2],validation_split=0.2, shuffle= True)
+        """# **Model Performance on Source**"""
+        predictions = counter_model.predict(X_test)
+        predictions2 = realtime_model.predict(predictions)
+        matplotlib.rcParams['mathtext.fontset'] = 'stix'
+        matplotlib.rcParams['font.family'] = 'STIXGeneral'
+        plt.figure(figsize=(10,10))
+        plt.scatter(counter_y_test, predictions2.ravel())
+        mse,r2 = mean_squared_error(counter_y_test#.reshape(-1,1)
+                , predictions2), r2_score(counter_y_test#.reshape(-1,1)
+                                , predictions2)
+        print(f"source on source mse is {mse}")
+        print(f"source on source r2 is {r2}")
+        plt.xlabel('Actual Labels', fontsize=32)
+        plt.ylabel('Predicted Labels', fontsize=32)
+        plt.xticks(fontsize=32)
+        plt.yticks(fontsize=32)
+        plt.savefig(f"{result_path}figs/Source-model-on-source-{target_app}-COUNTERS-{runFor}.pdf")
+        """# **Model Saving and Loading**"""
+        counter_model.save_weights(f"{model_path}x-{target_app}-COUNTERS-SourceModel")
+        realtime_model.save_weights(f"{model_path}x-COUNTERS-{runFor}-SourceModel")
+        plot_graphs(history, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-COUNTERS-{runFor}-train-val-loss.pdf")
+      elif use_case=="relay_only":
+        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-COUNTERS-parameters.txt", "r")
+        nums = f.readlines()
+        nums = nums[0].split(" ")
+        f.close()
+        f1 = open(f"{result_path}txt/Source-model-on-target-COUNTERS-{runFor}-parameters.txt", "r")
+        nums1 = f1.readlines()
+        nums1 = nums1[0].split(" ")
+        f1.close()
+        counter_model = create_model4(neurons_input = int(nums[0]) , num_of_layers_1= int(nums[1]),neurons_output = counter_X_train.shape[1], lr= float(nums[2]) , moment = float(nums[4]) , actF="relu", lossF="mean_squared_error", transfer=False, frozen_layers= num_of_frozen_layers )
+        realtime_model = create_model4(neurons_input = int(nums1[0]) , num_of_layers_1= int(nums1[1]), lr= float(nums1[2]) , moment = float(nums1[4]) , actF="relu", lossF="mean_squared_error", transfer=False, frozen_layers= num_of_frozen_layers )
+        callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=40)
+        history1 = counter_model.fit(X_train, counter_X_train, batch_size = int(nums[3]) , epochs=1000, callbacks=[ callback2],validation_split=0.2, shuffle= True)
+        history2 = realtime_model.fit(counter_X_train, counter_y_train, batch_size = int(nums1[3]) , epochs=1000, callbacks=[ callback2],validation_split=0.2, shuffle= True)
+        """# **Model Performance on Source**"""
+        predictions = counter_model.predict(X_test)
+        predictions2 = realtime_model.predict(predictions)
+        matplotlib.rcParams['mathtext.fontset'] = 'stix'
+        matplotlib.rcParams['font.family'] = 'STIXGeneral'
+        plt.figure(figsize=(10,10))
+        plt.scatter(counter_y_test, predictions2.ravel())
+        mse,r2 = mean_squared_error(counter_y_test#.reshape(-1,1)
+                , predictions2), r2_score(counter_y_test#.reshape(-1,1)
+                                , predictions2)
+        print(f"source on source mse is {mse}")
+        print(f"source on source r2 is {r2}")
+        plt.xlabel('Actual Labels', fontsize=32)
+        plt.ylabel('Predicted Labels', fontsize=32)
+        plt.xticks(fontsize=32)
+        plt.yticks(fontsize=32)
+        plt.savefig(f"{result_path}figs/Source-model-on-source-{target_app}-COUNTERS-{runFor}.pdf")
+        """# **Model Saving and Loading**"""
+        counter_model.save_weights(f"{model_path}x-{target_app}-COUNTERS-SourceModel")
+        realtime_model.save_weights(f"{model_path}x-COUNTERS-{runFor}-SourceModel")
+        plot_graphs(history1, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-COUNTERS-train-val-loss.pdf")
+        plot_graphs(history2, "loss", f"{result_path}figs/Source-model-on-source-COUNTERS-{runFor}-train-val-loss.pdf")
+        """#testing model on target data"""
+        tar_pred_scaled1 = counter_model.predict(tar_x_scaled)
+        tar_pred_scaled2 = realtime_model.predict(tar_pred_scaled1)
+        plt.figure(figsize=(10,10))
+        plt.scatter(counter_tar_y_scaled, tar_pred_scaled2.ravel())
+        mse,r2 = mean_squared_error(counter_tar_y_scaled#.reshape(-1,1)
+                        , tar_pred_scaled2), r2_score(counter_tar_y_scaled#.reshape(-1,1)
+                        , tar_pred_scaled2)
+        plt.xlabel('Actual Labels', fontsize=32)
+        plt.ylabel('Predicted Labels', fontsize=32)
+        plt.xticks(fontsize=32)
+        plt.yticks(fontsize=32)
+        plt.title(f'MSE: {mse}, R2: {r2}-sample')
+        mse = mean_squared_error(counter_tar_y_scaled, tar_pred_scaled2)
+        #rse = compute_rse(tar_y_scaled, tar_pred_scaled)   
+        print(f"mse is {mse}")
+        #print(f"rse is {rse}")
+        plt.savefig(f"{result_path}figs/Testing-Source-model-on-target-{target_app}-COUNTERS-{runFor}.pdf")
+
+
+      elif use_case =="relay_linear_probing":
         for i in range(5):
-          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-LP{num_of_frozen_layers}-results-{i}.csv", "w")
+          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-COUNTERS-{runFor}-LP{num_of_frozen_layers}-results-{i}.csv", "w")
           writer = csv.writer(fileI)
           for j in range(1,10):
             n = j/10
             tar_x_scaled, tar_y_scaled = p.getTargetScaled()
-            num_of_samples = int(n*len(tar_x_scaled))
+            counter_tar_x_scaled, counter_tar_y_scaled = counterProcessor.getTargetScaled()
+            num_of_samples = int(n*len(counter_tar_x_scaled))
             if num_of_frozen_layers == 1:
-              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "w" )
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-COUNTERS-{runFor}-LP-1-indices-{i}-{j}-percent.csv", "w" )
               readModeOn = False
             elif num_of_frozen_layers >1:
-              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "r" )
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-COUNTERS-{runFor}-LP-1-indices-{i}-{j}-percent.csv", "r" )
               readModeOn = True
             dropIndices = []
             rowArr = []
             x2 =[]
             lb2 = []
-            totallen = len(tar_x_scaled)
+            totallen = len(counter_tar_x_scaled)
             if readModeOn == True:
               loaded_indices = indices.readlines()
             z = 0
@@ -287,19 +451,54 @@ if __name__ == "__main__":
               dropIndices.append(index)
               z = z + 1
             x2.append(tar_x_scaled[index:index+1])
-            lb2.append(tar_y_scaled[index:index+1])
+            x22.append(counter_tar_x_scaled[index:index+1])
+            lb2.append(counter_tar_y_scaled[index:index+1])
             tar_x_scaled = np.delete(tar_x_scaled, index, 0)
-            tar_y_scaled = np.delete(tar_y_scaled, index, 0)
+            counter_tar_x_scaled = np.delete(counter_tar_x_scaled, index, 0)
+            counter_tar_y_scaled = np.delete(counter_tar_y_scaled, index, 0)
             totallen -= 1
             indices.close()
 
             x2 = tf.convert_to_tensor( x2, dtype=tf.float64)
+            x22 = tf.convert_to_tensor( x22, dtype=tf.float64)
             lb2 = tf.convert_to_tensor( lb2, dtype=tf.float64)
             x2 = tf.reshape(x2, (x2.shape[0], x2.shape[2]))
+            x22 = tf.reshape(x22, (x22.shape[0], x22.shape[2])) 
             lb2 = tf.reshape(lb2, (lb2.shape[0], lb2.shape[2]))
-            
-            X_n = tf.concat([X_train, x2], 0)
-            y_n = tf.concat([y_train, lb2], 0)
+            f = open(f"{result_path}txt/Source-model-on-target-{target_app}-COUNTERS-parameters.txt", "r")
+            nums = f.readlines()
+            nums = nums[0].split(" ")
+            f.close()
+            f1 = open(f"{result_path}txt/Source-model-on-target-COUNTERS-{runFor}-parameters.txt", "r")
+            nums1 = f1.readlines()
+            nums1 = nums1[0].split(" ")
+            f1.close()
+            counter_model = create_model4(neurons_input = int(nums[0]) , num_of_layers_1= int(nums[1]),neurons_output = counter_X_train.shape[1], lr= float(nums[2]) , moment = float(nums[4]) , actF="relu", lossF="mean_squared_error", transfer=True, frozen_layers= num_of_frozen_layers )
+            counter_model1 = create_model4(neurons_input = int(nums[0]) , num_of_layers_1= int(nums[1]),neurons_output = counter_X_train.shape[1], lr= float(nums[2]) , moment = float(nums[4]) , actF="relu", lossF="mean_squared_error", transfer=False, frozen_layers=0 )
+
+            counter_model = create_model4(neurons_input = counter_nnparameters.params['neuron'] , num_of_layers_1= counter_nnparameters.params['num_layers'] , neurons_output = counter_X_train.shape[1], lr= counter_nnparameters.params['lr2'] , moment = counter_nnparameters.params['Momentum'] , actF="relu", lossF="mean_squared_error")
+            realtime_model = create_model4(neurons_input = nnparameters.params['neuron'] , num_of_layers_1= nnparameters.params['num_layers'] , lr= nnparameters.params['lr2'] , moment = nnparameters.params['Momentum'] , actF="relu", lossF="mean_squared_error")
+            #model = create_model3(neurons_input = 740, num_of_layers_1= 1 , lr=0.0013461782513436136 , moment = 0.076 , actF="relu", lossF="mean_squared_error")
+            callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=40)
+            counter_model.fit(x2, x22, batch_size = int(nums[3]), epochs=50, callbacks = [callback2])
+            counter_model1.fit(x2, x22, batch_size = int(nums[3]), epochs=50, callbacks = [callback2])
+            counter_model1.load_weights(f"{model_path}x-{target_app}-COUNTERS-SourceModel")
+            ii = 0
+            while (ii) < len(counter_model1.layers):
+              print(ii)
+              counter_model.layers[ii].set_weights(counter_model1.layers[ii].get_weights())
+              ii += 1
+
+            predictions0 = model.predict(tar_x_scaled)
+            mse0 = mean_squared_error(tar_y_scaled, predictions0)
+            rowArr.append(mse0)
+            model.fit(x2, lb2, batch_size = int(nums[3]), epochs=ep1, callbacks = [callback2])
+            predictions2 = model.predict(tar_x_scaled)
+            mse2 = mean_squared_error(tar_y_scaled, predictions2)
+            rowArr.append(mse2)
+            writer.writerow(rowArr)
+          fileI.close()
+
             
       elif use_case == "train-test":
         nnparameters = optunannPOD.finder(X_train, y_train, epochs= ep1, checkpoint_path=f"chck_path{target_app}/", num_of_trials=trials, fold=10, stname=stdy, storageName =storageN )  #/content/MyDrive/SimpleNN/
@@ -381,7 +580,7 @@ if __name__ == "__main__":
         plot_graphs(history, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-train-val-loss.pdf")
         """# **Model Performane on Target**"""
       elif use_case == "source_only":
-        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-parameters.txt", "r")
+        f = open(f"{result_path}txt/Source-model-on-target-{target_app}-{runFor}-parameters.txt", "r")
         nums = f.readlines()
         nums = nums[0].split(" ")
         f.close()
@@ -392,8 +591,8 @@ if __name__ == "__main__":
 
         """# **Model Loading**"""
         history = model.fit(X_train, y_train, batch_size = int(nums[3]) , epochs=1000, callbacks=[ callback2], validation_split=0.2, shuffle= True)
-        model.save_weights(f"{model_path}x-{target_app}-SourceModel")
-        #model.load_weights(f"{model_path}x-{target_app}-SourceModel-2")
+        #model.save_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
+        model.load_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
         #model.fit(X_train, y_train, batch_size = int(nums[3]) , epochs=1000, callbacks=[ callback2])
         matplotlib.rcParams['mathtext.fontset'] = 'stix'
         matplotlib.rcParams['font.family'] = 'STIXGeneral'
@@ -410,7 +609,7 @@ if __name__ == "__main__":
         plt.xticks(fontsize=32)
         plt.yticks(fontsize=32)
         plt.title(f'MSE: {mse}, R2: {r2}-Source on source')
-        plt.savefig(f"{result_path}figs/Testing-Source-model-on-source-{target_app}.pdf")
+        plt.savefig(f"{result_path}figs/Testing-Source-model-on-source-{target_app}-{runFor}.pdf")
  
         """#testing model on target data"""
         tar_pred_scaled = model.predict(tar_x_scaled)
@@ -428,21 +627,21 @@ if __name__ == "__main__":
         #rse = compute_rse(tar_y_scaled, tar_pred_scaled)   
         print(f"mse is {mse}")
         #print(f"rse is {rse}")
-        plt.savefig(f"{result_path}figs/Testing-Source-model-on-target-{target_app}.pdf")
-        plot_graphs(history, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-train-val-loss.pdf")
+        plt.savefig(f"{result_path}figs/Testing-Source-model-on-target-{target_app}-{runFor}.pdf")
+        #plot_graphs(history, "loss", f"{result_path}figs/Source-model-on-source-{target_app}-train-val-loss.pdf")
       elif use_case == "linear_probing":
         for i in range(5):
-          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-LP{num_of_frozen_layers}-results-{i}.csv", "w")
+          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-{runFor}-LP{num_of_frozen_layers}-results-{i}.csv", "w")
           writer = csv.writer(fileI)
           for j in range(1,10):
             n = j/10
             tar_x_scaled, tar_y_scaled = p.getTargetScaled()
             num_of_samples = int(n*len(tar_x_scaled))
             if num_of_frozen_layers == 1:
-              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "w" )
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-{runFor}-LP-1-indices-{i}-{j}-percent.csv", "w" )
               readModeOn = False
             elif num_of_frozen_layers >1:
-              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "r" )
+              indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-{runFor}-LP-1-indices-{i}-{j}-percent.csv", "r" )
               readModeOn = True
             dropIndices = []
             rowArr = []
@@ -476,7 +675,7 @@ if __name__ == "__main__":
             x2 = tf.reshape(x2, (x2.shape[0], x2.shape[2]))
             lb2 = tf.reshape(lb2, (lb2.shape[0], lb2.shape[2]))
             
-            f = open(f"{result_path}txt/Source-model-on-target-{target_app}-parameters.txt", "r")
+            f = open(f"{result_path}txt/Source-model-on-target-{target_app}-{runFor}-parameters.txt", "r")
             nums = f.readlines()
             nums = nums[0].split(" ")
             f.close()
@@ -485,7 +684,7 @@ if __name__ == "__main__":
             callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=40)
             model.fit(x2, lb2, batch_size = int(nums[3]), epochs=50, callbacks = [callback2])
             model1.fit(x2, lb2, batch_size = int(nums[3]), epochs=50, callbacks = [callback2]) 
-            model1.load_weights(f"{model_path}x-{target_app}-SourceModel")
+            model1.load_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
             ii = 0
             while (ii) < len(model1.layers):
               print(ii)
@@ -503,13 +702,13 @@ if __name__ == "__main__":
           fileI.close()
       elif use_case == "fine_tuning":
         for i in range(5):
-          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-FT-results-{i}.csv", "w")
+          fileI = open(f"{result_path}csv/Source-model-on-target-{target_app}-{runFor}-FT-results-{i}.csv", "w")
           writer = csv.writer(fileI)
           for j in range(1,10):
             n = j/10
             tar_x_scaled, tar_y_scaled = p.getTargetScaled()
             num_of_samples = int(n*len(tar_x_scaled))
-            indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-LP-1-indices-{i}-{j}-percent.csv", "r" )
+            indices = open(f"{result_path}indices/Source-model-on-target-{target_app}-{runFor}-LP-1-indices-{i}-{j}-percent.csv", "r" )
             dropIndices = []
             rowArr = []
             x2 =[]
@@ -540,14 +739,14 @@ if __name__ == "__main__":
             x2 = tf.reshape(x2, (x2.shape[0], x2.shape[2]))
             lb2 = tf.reshape(lb2, (lb2.shape[0], lb2.shape[2]))
             
-            f = open(f"{result_path}txt/Source-model-on-target-{target_app}-parameters.txt", "r")
+            f = open(f"{result_path}txt/Source-model-on-target-{target_app}-{runFor}-parameters.txt", "r")
             nums = f.readlines()
             nums = nums[0].split(" ")
             f.close()
             model = create_model4(neurons_input = int(nums[0]) , num_of_layers_1= int(nums[1]), lr= float(nums[2]) , moment = float(nums[4]) , actF="relu", lossF="mean_squared_error", transfer=False, frozen_layers= num_of_frozen_layers)
             callback2 = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=40)
             model.fit(x2, lb2, batch_size = int(nums[3]), epochs=50, callbacks = [callback2])
-            model.load_weights(f"{model_path}x-{target_app}-SourceModel")
+            model.load_weights(f"{model_path}x-{target_app}-{runFor}-SourceModel")
             predictions0 = model.predict(tar_x_scaled)
             mse0 = mean_squared_error(tar_y_scaled, predictions0)
             rowArr.append(mse0)

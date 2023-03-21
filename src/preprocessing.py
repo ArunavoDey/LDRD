@@ -40,8 +40,8 @@ class preprocessor():
     self.tar_x_scaled = self.X_scaler.transform(self.tar_x)
     """# **Train Test validation**"""
   def train_test_val(self, test_size_, val_size, rand_state, rand_state2=0):
-    X_train, X_test, y_train, y_test = train_test_split( self.src_X_scaled, self.src_Y_scaled, test_size=test_size_, random_state=rand_state, shuffle = True, stratify = None)
-    src_train, src_val, src_y_train, src_y_val = train_test_split( X_train, y_train, test_size=val_size, random_state= rand_state2, shuffle = True, stratify = None)
+    X_train, X_test, y_train, y_test = train_test_split( self.src_X_scaled, self.src_Y_scaled, test_size=test_size_, random_state=rand_state, shuffle = False, stratify = None)
+    src_train, src_val, src_y_train, src_y_val = train_test_split( X_train, y_train, test_size=val_size, random_state= rand_state2, shuffle = False, stratify = None)
     return X_train, y_train, src_train, src_y_train, src_val, src_y_val, X_test, y_test
   def getTargetScaled(self):
     return self.tar_x_scaled, self.tar_y_scaled

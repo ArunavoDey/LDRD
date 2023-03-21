@@ -1,0 +1,19 @@
+Sat Mar 18 18:46:27 CDT 2023
+Index(['-p', '-dim', '-rs', '-tf', '-pa', '-i', '-s', '--niter', '--groups',
+       'Domain_quartz_kripke', 'Domain_quartz_laghos', 'Domain_quartz_lulesh',
+       'bj', 'sweep', 'seq...', 'sequ...', '...', 's...', 'seque...', 'se...'],
+      dtype='object')
+Index(['-p', '-dim', '-rs', '-tf', '-pa', '-i', '-s', '--niter', '--groups',
+       'Domain_quartz_kripke', 'Domain_quartz_laghos', 'Domain_quartz_lulesh',
+       'bj', 'sweep', 'seq...', 'sequ...', '...', 's...', 'seque...', 'se...'],
+      dtype='object')
+(386, 20)
+(210, 20)
+Src x shape before preprocessing
+(386, 20)
+Tar_x shape before preprocessing
+(210, 20)
+src_x shape (386, 20)
+tar_x shape (210, 20)
+sorry no match
+Sat Mar 18 18:47:24 CDT 2023
